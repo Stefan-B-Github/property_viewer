@@ -29,6 +29,7 @@ server:
   port: 8080
   sessionTimeout: 30
 # Security configuration
+geoapify.key: "2b6155e267ec459a9f4197eec515cde1"
 security:
   user:
     name: user
