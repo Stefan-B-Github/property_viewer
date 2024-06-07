@@ -24,8 +24,12 @@ eg POST: `http://localhost:8080/properties/`
 
 ```
 {
-    "name": "Property1",
-    "description": "Here is a property",
+    "buildingName": "Surrey Quays Centre",
+    "description": "Local Tesco",
+    "number": "Redriff Rd",
+    "city": "London",
+    "postcode": "SE16 7LL",
+    "country": "UNITED_KINGDOM",
     "id": 1
 }
 ```

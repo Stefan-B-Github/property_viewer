@@ -54,8 +54,13 @@ public class PropertyRestController {
         currentProperty.setDescription(property.getDescription());
         currentProperty.setCity(property.getCity());
         currentProperty.setCountry(property.getCountry());
-        currentProperty.setLatitude(property.getLatitude());
-        currentProperty.setLongitude(property.getLongitude());
+        try{
+            currentProperty.setCoordinates(property.getCoordinates());
+        }
+        catch(Exception e){
+            currentProperty.setCoordinates(null); 
+        }
+        
         currentProperty.setNumber(property.getNumber());
         currentProperty.setPostcode(property.getPostcode());
         return new ResponseEntity<>(repository.save(currentProperty), HttpStatus.OK);

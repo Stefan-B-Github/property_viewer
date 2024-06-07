@@ -1,21 +1,18 @@
 package com.stefan.propertyviewer.entity;
-
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.net.URL;
+import java.net.URI;
+
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.nio.charset.StandardCharsets;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,8 +30,7 @@ public class Property {
     private String postcode;
     private String city;
     private Country country;
-    private double latitude;
-    private double longitude;
+    private Double[] coordinates;
 
     public Property(String buildingName, String description, String number, String city, String postcode, String country) {
         this.buildingName = buildingName;
@@ -44,13 +40,10 @@ public class Property {
         this.postcode = postcode;
         this.country = Country.valueOf(country);
         try{
-            double[] coordinates = getCoordinates();
-            this.latitude = coordinates[0];
-            this.longitude = coordinates[1];
+            this.getCoordinates();
         }
         catch (Exception e){
-            this.latitude = 0;
-            this.longitude = 0;
+            System.out.println("Coordinate error: " + e.toString());
         }
     }
 
@@ -59,21 +52,6 @@ public class Property {
 
     public Long getId() {
         return id;
-    }
-
-    public double[] getCoordinates() throws IOException, JSONException {
-        String urlString = "https://api.geoapify.com/v1/geocode/search?text="+ buildingName +"%20" + city + "%20" + postcode + "%20" + country + "%20" + "&apiKey=2b6155e267ec459a9f4197eec515cde1";
-        URL url = new URL(urlString);
-        HttpURLConnection http = (HttpURLConnection)url.openConnection();
-        http.setRequestProperty("Accept", "application/json");   
-        JSONObject jsonObj =  new JSONObject(http.getResponseMessage());
-        http.disconnect();
-        JSONArray arrayObject = jsonObj.getJSONArray("features");
-        JSONObject featuresObject = arrayObject.getJSONObject(0).getJSONObject("properties");
-        double[] output = new double[2];
-        output[0] = featuresObject.getLong("lat");
-        output[1] = featuresObject.getLong("lon");
-        return output;
     }
 
     public String getBuildingName() {
@@ -99,20 +77,29 @@ public class Property {
         this.number = number;
     }
 
-    public double getLatitude(){
-        return latitude;
+    public Double[] getCoordinates() throws IOException, JSONException, InterruptedException {
+        if (this.coordinates != null){
+            return this.coordinates;
+        }
+        String addressLine = URLEncoder.encode(buildingName + " " + city + " " + postcode + " " + country.toString().replace("_"," "), StandardCharsets.UTF_8);
+        String urlString = "https://api.geoapify.com/v1/geocode/search?text="+ addressLine + "&apiKey=2b6155e267ec459a9f4197eec515cde1";
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+        .uri(URI.create(urlString))
+        .header("Content-Type", "application/json")
+        .build();
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        JSONObject jsonObj =  new JSONObject(response.body());
+        JSONArray arrayObject = jsonObj.getJSONArray("features");
+        JSONObject featuresObject = arrayObject.getJSONObject(0).getJSONObject("properties");
+        Double[] coordinates = new Double[2];
+        coordinates[0] = featuresObject.getDouble("lat");
+        coordinates[1] = featuresObject.getDouble("lon");  
+        return coordinates;
     }
 
-    public void setLatitude(double latitude){
-        this.latitude = latitude;
-    }
-
-    public double getLongitude(){
-        return longitude;
-    }
-
-    public void setLongitude(double longitude){
-        this.longitude = longitude;
+    public void setCoordinates(Double[] coordinates){
+        this.coordinates = coordinates;
     }
 
     public String getCity(){
