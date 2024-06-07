@@ -35,9 +35,8 @@ Pagination: `http://localhost:8080/properties?page=0&size=2&sort=createdAt,desc`
 
 ### TODO
 
-
-- Add extra fields to class
 - Frontend using API
+- Searching by other metrics
 - Other things
 
 --------------------------

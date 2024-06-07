@@ -33,16 +33,16 @@ public class PropertyRestController {
     @GetMapping
     public ResponseEntity<Collection<Property>> getAllProperties() {
         return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
-    }
+}
 
     @GetMapping("/{id}")
     public ResponseEntity<Property> getPropertyWithId(@PathVariable Long id) {
         return new ResponseEntity<Property>(repository.findById(id).get(), HttpStatus.OK);
     }
 
-    @GetMapping(params = {"name"})
-    public ResponseEntity<Collection<Property>> findPropertyWithName(@RequestParam(value = "name") String name) {
-        return new ResponseEntity<>(repository.findByName(name), HttpStatus.OK);
+    @GetMapping(params = {"buildingName"})
+    public ResponseEntity<Collection<Property>> findPropertyWithBuildingName(@RequestParam(value = "buildingName") String buildingName) {
+        return new ResponseEntity<>(repository.findByBuildingName(buildingName), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -50,10 +50,14 @@ public class PropertyRestController {
 
         Optional<Property> currentPropertyOpt = repository.findById(id);
         Property currentProperty = currentPropertyOpt.get();
-        currentProperty.setName(property.getName());
+        currentProperty.setBuildingName(property.getBuildingName());
         currentProperty.setDescription(property.getDescription());
-        currentProperty.setTags(property.getTags());
-
+        currentProperty.setCity(property.getCity());
+        currentProperty.setCountry(property.getCountry());
+        currentProperty.setLatitude(property.getLatitude());
+        currentProperty.setLongitude(property.getLongitude());
+        currentProperty.setNumber(property.getNumber());
+        currentProperty.setPostcode(property.getPostcode());
         return new ResponseEntity<>(repository.save(currentProperty), HttpStatus.OK);
     }
 
