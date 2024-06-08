@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +31,7 @@ public class PropertyRestController {
     private PropertyRepository repository;
 
     // Submit property by POST
+    @CrossOrigin
     @PostMapping
     public ResponseEntity<?> addProperty(@RequestBody Property property) throws IOException, JSONException, InterruptedException {
         checkCoordinates(property);
@@ -46,27 +48,32 @@ public class PropertyRestController {
     }
 
     @GetMapping
+    @CrossOrigin
     public ResponseEntity<Collection<Property>> getAllProperties() {
         return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
 }
 
     @GetMapping("/{id}")
+    @CrossOrigin
     public ResponseEntity<Property> getPropertyWithId(@PathVariable Long id) {
         return new ResponseEntity<Property>(repository.findById(id).get(), HttpStatus.OK);
     }
 
     @GetMapping(params = {"buildingName"})
+    @CrossOrigin
     public ResponseEntity<Collection<Property>> findPropertyWithBuildingName(@RequestParam(value = "buildingName") String buildingName) {
         return new ResponseEntity<>(repository.findByBuildingName(buildingName), HttpStatus.OK);
     }
 
     @GetMapping(params = {"postcode"})
+    @CrossOrigin
     public ResponseEntity<Collection<Property>> findPropertyWithPostcode(@RequestParam(value = "postcode") String postcode) {
         return new ResponseEntity<>(repository.findByPostcode(postcode), HttpStatus.OK);
     }
 
     // Update property by PUT
     @PutMapping("/{id}")
+    @CrossOrigin
     public ResponseEntity<Property> updatePropertyFromDB(@PathVariable("id") long id, @RequestBody Property property) {
 
         Optional<Property> currentPropertyOpt = repository.findById(id);
@@ -83,11 +90,13 @@ public class PropertyRestController {
     }
 
     @DeleteMapping("/{id}")
+    @CrossOrigin
     public void deletePropertyWithId(@PathVariable Long id) {
         repository.deleteById(id);
     }
 
     @DeleteMapping
+    @CrossOrigin
     public void deleteAllProperties() {
         repository.deleteAll();
     }
