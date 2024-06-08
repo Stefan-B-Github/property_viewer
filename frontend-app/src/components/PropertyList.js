@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 
-const mainUrl = "http://localhost:8080/properties";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 export default class PersonList extends React.Component {
   state = {
@@ -10,7 +10,7 @@ export default class PersonList extends React.Component {
   }
 
   componentDidMount() {
-    axios.get(mainUrl)
+    axios.get(apiUrl)
       .then(res => {
         const properties = res.data;
         this.setState({ properties });
@@ -30,7 +30,7 @@ export default class PersonList extends React.Component {
                 {this.state.properties
                     .map(property => <tr style={{ textAlign: "left" }}>
                         <th>
-                            <a href={mainUrl + property.id}>
+                            <a href={apiUrl + "/" + property.id}>
                                 {property.buildingName}
                             </a>
                         </th>
