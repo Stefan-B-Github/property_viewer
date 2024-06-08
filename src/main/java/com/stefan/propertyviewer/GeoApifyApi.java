@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.stefan.propertyviewer.entity.Country;
+import com.stefan.propertyviewer.entity.Property;
 
 @Component
 public class GeoApifyApi {
@@ -31,8 +31,12 @@ public class GeoApifyApi {
         GeoApifyApi.apiKey = apiKey;
     }
 
-    public static Double[] getCoordinatesFromGeoApi(String buildingName, String city, String postcode, Country country) {
-        String addressLine = URLEncoder.encode(buildingName + " " + city + " " + postcode + " " + country.toString().replace("_"," "), StandardCharsets.UTF_8);
+    public static Double[] getCoordinatesFromGeoApi(Property property) {
+        String buildingName = property.getBuildingName();
+        String city = property.getCity();
+        String postcode = property.getPostcode();
+        String country = property.getCountry().toString();
+        String addressLine = URLEncoder.encode(buildingName + " " + city + " " + postcode + " " + country.replace("_"," "), StandardCharsets.UTF_8);
         String urlString = "https://api.geoapify.com/v1/geocode/search?text="+ addressLine + "&apiKey=" + apiKey;
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()

@@ -10,4 +10,5 @@ import java.util.List;
 @RepositoryRestResource
 public interface PropertyRepository extends JpaRepository<Property, Long> {
     List<Property> findByBuildingName(String buildingName);
+    List<Property> findByPostcode(String postcode);
 }

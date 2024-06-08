@@ -4,22 +4,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.io.IOException;
-import java.net.URI;
-
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
-import java.nio.charset.StandardCharsets;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
-import org.json.JSONArray;
-import org.springframework.stereotype.Component;
-import com.stefan.propertyviewer.GeoApifyApi;
 
 @Entity
 public class Property {
@@ -35,20 +19,14 @@ public class Property {
     private Country country;
     private Double[] coordinates;
 
-    public Property(String buildingName, String description, String number, String city, String postcode, String country) {
+    public Property(String buildingName, String description, String number, String city, String postcode, String country, Double[] coordinates) {
         this.buildingName = buildingName;
         this.description = description;
         this.number = number;
         this.city = city;
         this.postcode = postcode;
         this.country = Country.valueOf(country);
-        try{
-
-            this.getCoordinates();
-        }
-        catch (Exception e){
-            System.out.println("Coordinate error: " + e.toString());
-        }
+        this.coordinates = coordinates;
     }
 
     public Property() {
@@ -81,11 +59,8 @@ public class Property {
         this.number = number;
     }
 
-    public Double[] getCoordinates() throws IOException, JSONException, InterruptedException {
-        if (this.coordinates != null){
-            return this.coordinates;
-        }
-        return GeoApifyApi.getCoordinatesFromGeoApi(buildingName,city,postcode,country);
+    public Double[] getCoordinates() {
+        return this.coordinates;
     }
 
     public void setCoordinates(Double[] coordinates){

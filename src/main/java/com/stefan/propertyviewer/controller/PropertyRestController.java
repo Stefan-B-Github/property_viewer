@@ -1,7 +1,10 @@
 package com.stefan.propertyviewer.controller;
 
+import com.stefan.propertyviewer.GeoApifyApi;
 import com.stefan.propertyviewer.entity.Property;
 import com.stefan.propertyviewer.repository.PropertyRepository;
+
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,19 +18,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/properties")
+@RequestMapping("/properties")
 public class PropertyRestController {
 
     @Autowired
     private PropertyRepository repository;
 
+    // Submit property by POST
     @PostMapping
-    public ResponseEntity<?> addProperty(@RequestBody Property property) {
+    public ResponseEntity<?> addProperty(@RequestBody Property property) throws IOException, JSONException, InterruptedException {
+        checkCoordinates(property);
         return new ResponseEntity<>(repository.save(property), HttpStatus.CREATED);
+    }
+
+    // Call API if necessary
+    private void checkCoordinates(Property property){
+        Double[] coordinatesToTest = property.getCoordinates();
+        if(coordinatesToTest == null || coordinatesToTest.length < 2 || Double.isNaN(coordinatesToTest[0]) || Double.isNaN(coordinatesToTest[1])){
+            Double[] tempCoordinates = GeoApifyApi.getCoordinatesFromGeoApi(property);
+            property.setCoordinates(tempCoordinates);
+        }
     }
 
     @GetMapping
@@ -45,6 +60,12 @@ public class PropertyRestController {
         return new ResponseEntity<>(repository.findByBuildingName(buildingName), HttpStatus.OK);
     }
 
+    @GetMapping(params = {"postcode"})
+    public ResponseEntity<Collection<Property>> findPropertyWithPostcode(@RequestParam(value = "postcode") String postcode) {
+        return new ResponseEntity<>(repository.findByPostcode(postcode), HttpStatus.OK);
+    }
+
+    // Update property by PUT
     @PutMapping("/{id}")
     public ResponseEntity<Property> updatePropertyFromDB(@PathVariable("id") long id, @RequestBody Property property) {
 
@@ -54,13 +75,8 @@ public class PropertyRestController {
         currentProperty.setDescription(property.getDescription());
         currentProperty.setCity(property.getCity());
         currentProperty.setCountry(property.getCountry());
-        try{
-            currentProperty.setCoordinates(property.getCoordinates());
-        }
-        catch(Exception e){
-            currentProperty.setCoordinates(null); 
-        }
-        
+        checkCoordinates(property);
+        currentProperty.setCoordinates(property.getCoordinates());     
         currentProperty.setNumber(property.getNumber());
         currentProperty.setPostcode(property.getPostcode());
         return new ResponseEntity<>(repository.save(currentProperty), HttpStatus.OK);
