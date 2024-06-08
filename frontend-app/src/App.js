@@ -1,19 +1,20 @@
 import logo from './logo.svg';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import PropertyList from './components/PropertyList.js';
-import PropertyAdd from './components/PropertyAdd';
-
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import EditPage from './EditPage';
+import HomePage from './HomePage';
 
 function App() {
   return (
-    <div className="App">
-      <div class="container">
-      <PropertyList/>
-      <hr/>
-      <PropertyAdd/>
-      </div>
-    </div>
-  )
+    <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<HomePage />}/>
+      <Route path="edit_property/:id" exact={false} element={< EditPage />} />
+    </Routes>
+  </BrowserRouter>
+
+
+  );
 }
 
 export default App;

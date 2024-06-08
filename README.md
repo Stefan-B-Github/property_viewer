@@ -36,6 +36,12 @@ eg POST: `http://localhost:8080/properties/`
 
 Pagination: `http://localhost:8080/properties?page=0&size=2&sort=createdAt,desc`
 
+Frontend:
+```
+npm install react-router-dom
+npm install --save bootstrap
+npm start
+```
 
 ### TODO
 

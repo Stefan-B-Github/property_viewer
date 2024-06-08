@@ -19,7 +19,7 @@ export default class PersonList extends React.Component {
 
   render() {
     return (
-        <><h1>Property List</h1><table class="table">
+        <><table class="table">
             <tbody>
                 <tr>
                     <th scope="col">Building Name</th>
@@ -30,7 +30,7 @@ export default class PersonList extends React.Component {
                 {this.state.properties
                     .map(property => <tr style={{ textAlign: "left" }}>
                         <th>
-                            <a href={apiUrl + "/" + property.id}>
+                            <a href={"edit_property/" + property.id}>
                                 {property.buildingName}
                             </a>
                         </th>
