@@ -4,9 +4,9 @@ import PropertyAddOrEdit from './components/PropertyAddOrEdit';
 
 const EditPage = () => {
   return (
-    <div>
+    <div class="container">
       <h2>Edit current property</h2>
-      <PropertyAddOrEdit/>
+      <PropertyAddOrEdit example="foo"/>
     </div>
   );
 };

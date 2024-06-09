@@ -6,8 +6,9 @@ import CountrySelect from './CountrySelect';
 const apiUrl = process.env.REACT_APP_API_URL;
 const urlArray = window.location.href.split("/");
 const currentId = urlArray[urlArray.length - 1];
-const pageMode = currentId ? "Edit" : "Add"; 
+const pageMode = currentId ? "Update this property" : "Add"; 
 const removeButtonStyle = currentId ? "block": "None";
+const idStyle = currentId ? "None": "auto";
 
 export default class PropertyAddOrEdit extends React.Component {
 
@@ -49,6 +50,10 @@ export default class PropertyAddOrEdit extends React.Component {
       window.alert("Property Deleted")
         window.location.href = "/";
     })
+  }
+
+  goBack = event => {
+    window.location.href = "/";
   }
 
   updateMiniMap(lat,long){
@@ -99,11 +104,22 @@ export default class PropertyAddOrEdit extends React.Component {
           <CountrySelect />
           </select>
           <label for="id1">ID:</label>
-          <input class="form-control" type="number" id="id1" name="id" required/>
-          <button id="button1" type="submit">{pageMode}</button>
-        </form>
-        <br/>
-        <button style={{ display:removeButtonStyle }} id="button2" onClick={this.handleDelete}><strong>Delete this property.</strong></button>
+          <input style={{ pointerEvents:idStyle }} class="form-control" type="number" id="id1" name="id" required/>
+          <br />
+          <table class="table">
+            <tr scope="col">
+              <td>
+                <button id="button1" type="submit">{pageMode}</button>
+              </td>
+              <td>
+                <button style={{ display:removeButtonStyle }} id="button2" onClick={this.handleDelete}><strong>Delete this property.</strong></button>
+              </td>
+              <td>
+                <button style={{ display:removeButtonStyle }} id="button3" onClick={this.goBack}>Go back.</button>
+              </td>
+            </tr>
+          </table>
+          </form>
       </div>
     )
   }
