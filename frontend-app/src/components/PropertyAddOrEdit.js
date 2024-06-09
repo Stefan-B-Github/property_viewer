@@ -9,7 +9,6 @@ const currentId = urlArray[urlArray.length - 1];
 const pageMode = currentId ? "Edit" : "Add"; 
 const removeButtonStyle = currentId ? "block": "None";
 
-
 export default class PropertyAddOrEdit extends React.Component {
 
   handleSubmit = event => {
@@ -52,6 +51,12 @@ export default class PropertyAddOrEdit extends React.Component {
     })
   }
 
+  updateMiniMap(lat,long){
+    const url1 = "https://maps.google.com/maps?q=" + lat + "," + long + "&t=&z=15&ie=UTF8&iwloc=&output=embed"
+    document.getElementById("minimap").innerHTML = "<iframe src = " + url1 + "></iframe>";
+    document.getElementById("coordinates").innerHTML = "Coordinates: " + lat + ", " + long;
+  }
+
   componentDidMount() {
     if (pageMode == "Add"){ // Not populating in Add mode.
       return
@@ -66,12 +71,18 @@ export default class PropertyAddOrEdit extends React.Component {
         document.getElementById("cn1").value = incomingProperty.country;
         document.getElementById("ps1").value = incomingProperty.postcode;
         document.getElementById("id1").value = incomingProperty.id;
+        this.updateMiniMap(incomingProperty.coordinates[0],incomingProperty.coordinates[1])
       })
   }
 
   render() {
     return (
       <div class="form-group, w-50">
+        <div style={{ display:removeButtonStyle }}>
+          <p id="coordinates"></p>
+          <div id="minimap">
+          </div>
+        </div>
         <form onSubmit={this.handleSubmit}>
           <label for="bn1">Building Name:</label>
           <input class="form-control" type="text" id="bn1" name="buildingName" required/>
